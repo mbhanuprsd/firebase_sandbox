@@ -58,7 +58,7 @@ class _LoginPageState extends State<LoginPage>
     loginForm.save();
     if(loginForm.validate())
     {
-      print('Valid FOrm. Email: $_email, Password: $_password');
+      print('Valid Form. Email: $_email, Password: $_password');
     }
     else
     {
