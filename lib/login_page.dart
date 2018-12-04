@@ -47,14 +47,20 @@ class _LoginPageState extends State<LoginPage> {
                   'Login',
                   style: TextStyle(fontSize: 20.0),
                 ),
-                onPressed: validateAndSave,
+                onPressed: () => validateAndSave()
+                    .then((user) => print(user))
+                    .catchError((e) => print(e)),
+                color: Colors.blue,
               ),
               new RaisedButton(
-                  child: const Text('Sign In with Google'),
-                  onPressed: () => signInWithGoogle()
-                      .then((user) => print(user))
-                      .catchError((e) => print(e)),
-                  color: Colors.green,
+                child: new Text(
+                  'Sign In with Google',
+                  style: TextStyle(fontSize: 20.0),
+                ),
+                onPressed: () => signInWithGoogle()
+                    .then((user) => print(user))
+                    .catchError((e) => print(e)),
+                color: Colors.green,
               ),
             ],
           ),
@@ -63,14 +69,16 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void validateAndSave() {
+  Future<FirebaseUser> validateAndSave() async {
     final loginForm = formKey.currentState;
     loginForm.save();
     if (loginForm.validate()) {
       print('Valid Form. Email: $_email, Password: $_password');
-      _auth.signInWithEmailAndPassword(email: _email, password: _password);
+      FirebaseUser user = await _auth.signInWithEmailAndPassword(
+          email: _email, password: _password);
+      return user;
     } else {
-      print('Invalid Form');
+      throw new Exception("Inavlid form");
     }
   }
 
@@ -78,8 +86,8 @@ class _LoginPageState extends State<LoginPage> {
     GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
     GoogleSignInAuthentication gSA = await googleSignInAccount.authentication;
 
-    FirebaseUser user = await _auth.signInWithGoogle(idToken: gSA.idToken,
-        accessToken: gSA.accessToken);
+    FirebaseUser user = await _auth.signInWithGoogle(
+        idToken: gSA.idToken, accessToken: gSA.accessToken);
     print("Login succesful : " + user.email);
     return user;
   }
