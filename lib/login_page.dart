@@ -1,3 +1,4 @@
+import 'package:firebase_sandbox/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -15,6 +16,13 @@ class _LoginPageState extends State<LoginPage> {
 
   String _email;
   String _password;
+
+  void signOut() {
+    googleSignIn.signOut();
+    googleSignIn.disconnect();
+    Navigator.pop(context);
+    print("User Signed Out");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(fontSize: 20.0),
                 ),
                 onPressed: () => validateAndSave()
-                    .then((user) => print(user))
+                    .then((user) => navigateToHome())
                     .catchError((e) => print(e)),
                 color: Colors.blue,
               ),
@@ -58,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(fontSize: 20.0),
                 ),
                 onPressed: () => signInWithGoogle()
-                    .then((user) => print(user))
+                    .then((user) => navigateToHome())
                     .catchError((e) => print(e)),
                 color: Colors.green,
               ),
@@ -90,5 +98,12 @@ class _LoginPageState extends State<LoginPage> {
         idToken: gSA.idToken, accessToken: gSA.accessToken);
     print("Login succesful : " + user.email);
     return user;
+  }
+
+  void navigateToHome() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => HomePage(signOut)),
+    );
   }
 }
