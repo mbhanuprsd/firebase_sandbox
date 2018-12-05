@@ -1,10 +1,11 @@
+import 'dart:async';
+
 import 'package:firebase_sandbox/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-final DocumentReference _documentReference =
-    Firestore.instance.collection('myData').document('dummy');
+DocumentReference _documentReference;
 
 class HomePage extends StatefulWidget {
   @override
@@ -13,6 +14,7 @@ class HomePage extends StatefulWidget {
 
 class HomeState extends State<HomePage> {
   String textUpdates;
+  StreamSubscription<DocumentSnapshot> _subscription;
 
   @override
   Widget build(BuildContext context) {
@@ -33,21 +35,23 @@ class HomeState extends State<HomePage> {
       body: new Container(
         padding: EdgeInsets.all(20.0),
         child: new Column(
-          children: [
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 buildButtonColumn(Icons.add, 'Add', _add),
                 buildButtonColumn(Icons.update, 'Update', _update),
                 buildButtonColumn(Icons.delete, 'Delete', _delete),
-                buildButtonColumn(Icons.cloud_download, 'Fetch', _fetch),
+                buildButtonColumn(Icons.file_download, 'Fetch', _fetch),
+                buildButtonColumn(Icons.clear_all, 'Clear', clearUpdates),
               ],
             ),
             textUpdates == null
                 ? new Container()
                 : new Text(
                     textUpdates,
-                    style: new TextStyle(fontSize: 18.0),
+                    style: new TextStyle(fontSize: 18.0, color: Colors.black),
                   ),
           ],
         ),
@@ -57,6 +61,9 @@ class HomeState extends State<HomePage> {
 
   void updateText(String text) {
     setState(() {
+      if (textUpdates == null) {
+        textUpdates = '';
+      }
       textUpdates = textUpdates + "\n" + text;
     });
   }
@@ -74,7 +81,9 @@ class HomeState extends State<HomePage> {
       "powers": "many..",
     };
     _documentReference.setData(data).whenComplete(() {
-      updateText("Document added");
+      print("Document added");
+    }).catchError((e) {
+      print(e);
     });
   }
 
@@ -86,23 +95,23 @@ class HomeState extends State<HomePage> {
       "weakness": "Kryptonite",
     };
     _documentReference.updateData(data).whenComplete(() {
-      updateText("Document updated");
+      print("Document updated");
     });
   }
 
   void _delete() {
     _documentReference.delete().whenComplete(() {
-      updateText("Document deleted");
+      print("Document deleted");
     });
   }
 
   void _fetch() {
     _documentReference.get().then((dataSnapshot) {
       if (dataSnapshot.exists) {
-        this.updateText(dataSnapshot.data['name'].toString() + " fetched");
+        print(dataSnapshot.data['name'].toString() + " fetched");
       }
     }).catchError((e) => () {
-          updateText(e);
+          print(e);
         });
   }
 
@@ -141,5 +150,30 @@ class HomeState extends State<HomePage> {
         ),
       ],
     );
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    FirebaseAuth.instance.currentUser().then((user) {
+      _documentReference =
+          Firestore.instance.collection(user.email).document('Details');
+      _subscription = _documentReference.snapshots().listen((dataSnapshot) {
+        if (dataSnapshot.exists) {
+          updateText(dataSnapshot.data['name'].toString() + " synced");
+        }
+      });
+    }).catchError((e) {
+      signOut();
+      print("No user detected");
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _subscription?.cancel();
   }
 }

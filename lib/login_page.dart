@@ -61,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () => signInWithGoogle()
                     .then((user) => navigateToHome())
                     .catchError((e) => print(e)),
-                color: Colors.green,
+                color: Colors.lime,
               ),
             ],
           ),
