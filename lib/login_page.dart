@@ -18,8 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   String _password;
 
   void signOut() {
-    googleSignIn.signOut();
-    googleSignIn.disconnect();
+    _googleSignIn.signOut();
     Navigator.pop(context);
     print("User Signed Out");
   }
