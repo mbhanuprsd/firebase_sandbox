@@ -17,12 +17,6 @@ class _LoginPageState extends State<LoginPage> {
   String _email;
   String _password;
 
-  void signOut() {
-    _googleSignIn.signOut();
-    Navigator.pop(context);
-    print("User Signed Out");
-  }
-
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -100,9 +94,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void navigateToHome() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => HomePage(signOut)),
-    );
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => HomePage()));
   }
 }

@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
     return new MaterialApp(
       title: 'Flutter Firebase',
       theme: new ThemeData(
-         primarySwatch: Colors.blue,
+        primarySwatch: Colors.blue,
       ),
       home: new LoginPage(),
     );
