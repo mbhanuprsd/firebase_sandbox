@@ -1,6 +1,9 @@
 import 'dart:async';
-
-import 'package:firebase_sandbox/login_page.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'package:firebase_sandbox/models/google_book_model.dart';
+import 'package:firebase_sandbox/pages/book_list_page.dart';
+import 'package:firebase_sandbox/pages/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -46,6 +49,15 @@ class HomeState extends State<HomePage> {
                 buildButtonColumn(Icons.file_download, 'Fetch', _fetch),
                 buildButtonColumn(Icons.clear_all, 'Clear', clearUpdates),
               ],
+            ),
+            new RaisedButton(
+              child: Text(
+                'Book List',
+                style: TextStyle(fontSize: 18.0),
+              ),
+              color: Colors.blueAccent,
+              onPressed: () => Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => BookListPage())),
             ),
             textUpdates == null
                 ? new Container()
@@ -156,6 +168,7 @@ class HomeState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    getGoogleBooks();
     FirebaseAuth.instance.currentUser().then((user) {
       _documentReference =
           Firestore.instance.collection(user.email).document('Details');
@@ -175,5 +188,13 @@ class HomeState extends State<HomePage> {
     // TODO: implement dispose
     super.dispose();
     _subscription?.cancel();
+  }
+
+  getGoogleBooks() async {
+    HttpClient()
+        .getUrl(Uri.parse(
+            'https://www.googleapis.com/books/v1/volumes?q=thriller')) // produces a request object
+        .then((request) => request.close()) // sends the request
+        .then((response) => response.transform(Utf8Decoder()).listen(print));
   }
 }
