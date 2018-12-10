@@ -5,26 +5,41 @@ class BookModel {
   String bookID;
   String name;
   String author;
+  String imageUrl;
   String description;
-  bool status;
+  String googleId;
+  bool status = false;
   BookUser bookedBy;
 
-  BookModel(this.name, this.author, this.description);
+  BookModel(
+    this.name,
+    this.author,
+    this.imageUrl,
+    this.description,
+    this.googleId,
+  );
 
   BookModel.fromSnapshot(DocumentSnapshot snapshot)
       : bookID = snapshot.documentID,
         name = snapshot['name'],
         author = snapshot['author'],
         description = snapshot['description'],
-        status = snapshot['status'],
-        bookedBy = BookUser.fromData(snapshot['bookedBy']);
+        status = snapshot['status'] == null ? false : snapshot['status'],
+        bookedBy = snapshot['bookedBy'] == null
+            ? null
+            : BookUser.fromData(snapshot['bookedBy']),
+        googleId = snapshot['googleId'],
+        imageUrl = snapshot['imageUrl'];
 
   Map<String, dynamic> toJson() => {
+        'bookId': bookID,
         'name': name,
         'author': author,
         'description': description,
         'status': status,
-        'bookedBy': bookedBy.toJson()
+        'bookedBy': bookedBy?.toJson(),
+        'imageUrl': imageUrl,
+        'googleId': googleId
       };
 }
 

@@ -72,7 +72,8 @@ class AddBookState extends State<AddBookPage> {
     final loginForm = formKey.currentState;
     loginForm.save();
     if (loginForm.validate()) {
-      BookModel bookModel = new BookModel(_name, _author, _description);
+      BookModel bookModel =
+          new BookModel(_name, _author, null, _description, null);
       await _collectionReference
           .add(bookModel.toJson())
           .then((doc) => Navigator.pop(context))

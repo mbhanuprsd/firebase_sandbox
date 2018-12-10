@@ -25,6 +25,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
       body: new Container(
         padding: EdgeInsets.all(20.0),
+        alignment: FractionalOffset.center,
         child: new Form(
           key: formKey,
           child: new Column(

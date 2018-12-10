@@ -1,5 +1,5 @@
+import 'package:firebase_sandbox/pages/splash_page.dart';
 import 'package:flutter/material.dart';
-import 'pages/login_page.dart';
 
 void main() => runApp(new MyApp());
 
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
       theme: new ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: new LoginPage(),
+      home: new SplashPage(),
     );
   }
 }

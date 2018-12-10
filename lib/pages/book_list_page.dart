@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_sandbox/items/book_list_item.dart';
-import 'package:firebase_sandbox/pages/add_book_page.dart';
 import 'package:firebase_sandbox/models/book_model.dart';
 import 'package:firebase_sandbox/pages/home_page.dart';
+import 'package:firebase_sandbox/pages/search_books_page.dart';
+import 'package:firebase_sandbox/utils/app_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -33,9 +35,9 @@ class BookListState extends State<BookListPage> {
         ),
         actions: <Widget>[
           new IconButton(
-            icon: new Icon(Icons.add),
-            onPressed: () => Navigator.push(context,
-                MaterialPageRoute(builder: (context) => AddBookPage())),
+            icon: new Icon(Icons.search),
+            onPressed: () => Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => BookSearchPage())),
           ),
         ],
       ),
@@ -54,7 +56,10 @@ class BookListState extends State<BookListPage> {
                     child: new ListView.builder(
                         itemCount: bookList.length,
                         itemBuilder: (BuildContext ctxt, int index) {
-                          return new BookItem(bookList[index]);
+                          return new BookItem(
+                            bookList[index],
+                            true,
+                          );
                         }),
                   ),
           ],

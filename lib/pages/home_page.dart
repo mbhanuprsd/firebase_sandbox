@@ -168,7 +168,6 @@ class HomeState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getGoogleBooks();
     FirebaseAuth.instance.currentUser().then((user) {
       _documentReference =
           Firestore.instance.collection(user.email).document('Details');
@@ -188,13 +187,5 @@ class HomeState extends State<HomePage> {
     // TODO: implement dispose
     super.dispose();
     _subscription?.cancel();
-  }
-
-  getGoogleBooks() async {
-    HttpClient()
-        .getUrl(Uri.parse(
-            'https://www.googleapis.com/books/v1/volumes?q=thriller')) // produces a request object
-        .then((request) => request.close()) // sends the request
-        .then((response) => response.transform(Utf8Decoder()).listen(print));
   }
 }
